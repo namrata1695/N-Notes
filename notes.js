@@ -1,18 +1,19 @@
 const fs = require('fs')
 const chalk = require('chalk');
 
-const getNotes = function getNotes()
+const getNotes = () =>
 {
     var notes = "Your notes..";
     return notes;
 }
 
-const addNote = function(title, body)
+const addNote = (title, body) =>
 {
     const notes = loadNotes()
-    const duplicateNotes = notes.filter(function(note){
+    const duplicateNotes = notes.filter((note) => note.title === title)
+/*    const duplicateNotes = notes.filter(function(note){
         return note.title === title
-    })
+    }) */
 
     if(duplicateNotes.length === 0)
     {
@@ -21,20 +22,23 @@ const addNote = function(title, body)
             body : body
         })
         saveNotes(notes);
+        const greenMsg = chalk.green.inverse('New note added!');
+        console.log(greenMsg);
     }
     else
     {
-        console.log('Note title already taken')
+        const redMsg = chalk.red.inverse('Note title is taken!');
+        console.log(redMsg);
     } 
 }
 
-const saveNotes = function(notes)
+const saveNotes = (notes) => 
 {
     const dataJSON = JSON.stringify(notes);
     fs.writeFileSync('notes.json', dataJSON)
 }
 
-const loadNotes = function() 
+const loadNotes = () => 
 {
     try
     {
@@ -48,13 +52,15 @@ const loadNotes = function()
     }
 }
 
-const removeNote = function(title)
+const removeNote = (title) =>
 {
     const notes = loadNotes();
+    const notesToKeep = notes.filter((note) => note.title !== title)
+/*
     const notesToKeep = notes.filter(function(note)
     {
         return note.title !== title;
-    })
+    }) */
 
     if(notes.length > notesToKeep.length)
     {
@@ -69,9 +75,33 @@ const removeNote = function(title)
     }
 }
 
+const listNotes = () =>
+{
+    const msg = chalk.inverse('Your Notes');
+    console.log(msg);
+
+    const notes = loadNotes()
+    notes.array.forEach((note) => {
+        console.log(note.title)
+    });
+    /*const notesList = notes.filter((note) => 
+    {
+        console.log(note.title);
+        return true;
+    })
+  
+    if(notesList.length === 0)
+    {
+        const redMsg = chalk.green.inverse('No notes added yet!');
+        console.log(redMsg);
+    } */
+}
+
+
 module.exports =
 {
     getNotes : getNotes,
     addNote : addNote,
-    removeNote : removeNote
+    removeNote : removeNote,
+    listNotes : listNotes
 }
